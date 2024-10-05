@@ -1,26 +1,14 @@
-import Url from 'url/Model/Url.js';
+import Url from '../Model/Url.js';
 
-class UrlRepository {
-    async getAll() {
-        return Url.find();
-    }
 
-    async getById(id) {
-        return Url.findById(id);
-    }
+const findAll = async () => {
+    return await Url.find({});
+};
 
-    async create(data) {
-        const url = new Url(data);
-        return url.save();
-    }
+const findById = async (urlId) => {
+  return await Url.findById(urlId);
 
-    async update(id, data) {
-        return Url.findByIdAndUpdate(id, data, { new: true });
-    }
-
-    async delete(id) {
-        return Url.findByIdAndDelete(id);
-    }
 }
 
-export default new UrlRepository();
+
+export {findAll, findById};
