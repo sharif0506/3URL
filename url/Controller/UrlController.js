@@ -1,7 +1,23 @@
-import {getAllUrls, getUrlById, createUrl, updateUrl, deleteUrl} from "../Service/UrlService.js";
+import {getAllUrls, getUrlById, createUrl, updateUrl, deleteUrl, getUrlByShortCode} from "../Service/UrlService.js";
 import {nanoid} from 'nanoid';
 import validator from "validator";
 
+
+const handleGetUrlByShortCode = async (req, res) => {
+    try {
+        const {shortCode} = req.params;
+        console.log(req.params);
+        if (shortCode.length !== 10) {
+            return res.status(400).send({message: 'Invalid short code'});
+        }
+        const url = await getUrlByShortCode(shortCode);
+        if (!url) return res.status(404).send({message: 'Url Not Found'});
+        return res.redirect(url.originalUrl);
+    } catch (error) {
+        console.log(error.message);
+        return res.status(500).send("Internal Server Error");
+    }
+}
 
 const handleGetUrls = async (req, res) => {
     try {
@@ -111,4 +127,4 @@ const handleDeleteUrl = async (req, res) => {
 }
 
 
-export {handleGetUrls, handleGetUrlById, handleCreateUrl, handleUpdateUrl, handleDeleteUrl};
+export {handleGetUrls, handleGetUrlById, handleCreateUrl, handleUpdateUrl, handleDeleteUrl, handleGetUrlByShortCode };

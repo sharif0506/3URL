@@ -9,6 +9,10 @@ const findById = async (urlId) => {
     return await Url.findById(urlId).exec();
 }
 
+const findByShortCode = async (shortCode) => {
+    return await Url.findOne({shortCode: shortCode}).exec();
+}
+
 const create = async (url) => {
     const urlModel = new Url(url);
     return await urlModel.save();
@@ -27,4 +31,4 @@ const remove = async (urlId) => {
 }
 
 
-export {findAll, findById, create, update, remove};
+export {findAll, findById, create, update, remove, findByShortCode};

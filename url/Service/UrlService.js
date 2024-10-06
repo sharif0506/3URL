@@ -1,4 +1,4 @@
-import {findAll, findById, create, update, remove} from "../Repository/UrlRepository.js";
+import {findAll, findById, create, update, remove, findByShortCode} from "../Repository/UrlRepository.js";
 
 const getAllUrls = async () => {
     return await findAll();
@@ -6,6 +6,10 @@ const getAllUrls = async () => {
 
 const getUrlById = async (urlId) => {
     return await findById(urlId);
+}
+
+const getUrlByShortCode = async (shortCode) => {
+    return await findByShortCode(shortCode);
 }
 
 const createUrl = async (url) => {
@@ -21,4 +25,4 @@ const deleteUrl = async (urlId) => {
 }
 
 
-export {getAllUrls, getUrlById, createUrl, updateUrl, deleteUrl};
+export {getAllUrls, getUrlById, createUrl, updateUrl, deleteUrl, getUrlByShortCode};

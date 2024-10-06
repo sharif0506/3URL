@@ -4,6 +4,7 @@ import morgan from 'morgan';
 import cors from 'cors';
 import userRouter from './user/routes.js';
 import urlRouter from "./url/Route/UrlRoutes.js";
+import shortUrlRouter from "./url/Route/ShortUrlRoutes.js";
 import mongoose from "mongoose";
 import dotenv from 'dotenv';
 
@@ -20,9 +21,7 @@ app.use(cors());
 // MongoDB Connection
 try {
     const mongoDbUrl = process.env.MONGODB_URL;
-
     console.log(mongoDbUrl, typeof mongoDbUrl);
-
     await mongoose.connect(mongoDbUrl);
 } catch (exception) {
     console.log(exception)
@@ -31,9 +30,6 @@ try {
 app.use('/api/users', userRouter);
 app.use('/api/urls', urlRouter);
 
-app.get('/:shortCode', (req, res) => {
-    // redirect to original url
-    res.redirect("http://www.youtube.com");
-});
+app.use('/t', shortUrlRouter);
 
 export default app;
