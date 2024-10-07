@@ -15,7 +15,7 @@ const handleGetUrlByShortCode = async (req, res) => {
         return res.redirect(url.originalUrl);
     } catch (error) {
         console.log(error.message);
-        return res.status(500).send("Internal Server Error");
+        return res.status(500).send({message: "Internal Server Error"});
     }
 }
 
@@ -25,7 +25,7 @@ const handleGetUrls = async (req, res) => {
         return res.status(200).send(urls);
     } catch (error) {
         console.log(error.message);
-        return res.status(500).send(error.message);
+        return res.status(500).send({message: "Internal Server Error"});
     }
 };
 
@@ -45,7 +45,7 @@ const handleGetUrlById = async (req, res) => {
 
     } catch (error) {
         console.log(error.message);
-        return res.status(500).send("Internal Server Error");
+        return res.status(500).send({message: "Internal Server Error"});
     }
 };
 
@@ -72,7 +72,7 @@ const handleCreateUrl = async (req, res) => {
         return res.status(201).send(url);
     } catch (error) {
         console.log(error.message);
-        return res.status(500).send("Internal Server Error");
+        return res.status(500).send({message: "Internal Server Error"});
     }
 
 };
@@ -104,7 +104,7 @@ const handleUpdateUrl = async (req, res) => {
         return res.status(200).send(url);
     } catch (error) {
         console.log(error.message);
-        return res.status(500).send("Internal Server Error");
+        return res.status(500).send({message: "Internal Server Error"});
     }
 
 }
@@ -122,9 +122,9 @@ const handleDeleteUrl = async (req, res) => {
 
     } catch (error) {
         console.log(error.message);
-        return res.status(500).send("Internal Server Error");
+        return res.status(500).send({message: "Internal Server Error"});
     }
 }
 
 
-export {handleGetUrls, handleGetUrlById, handleCreateUrl, handleUpdateUrl, handleDeleteUrl, handleGetUrlByShortCode };
+export {handleGetUrls, handleGetUrlById, handleCreateUrl, handleUpdateUrl, handleDeleteUrl, handleGetUrlByShortCode};
