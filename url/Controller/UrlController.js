@@ -6,7 +6,7 @@ import validator from "validator";
 const handleGetUrlByShortCode = async (req, res) => {
     try {
         const {shortCode} = req.params;
-        console.log(req.params);
+
         if (shortCode.length !== 10) {
             return res.status(400).send({message: 'Invalid short code'});
         }
@@ -69,7 +69,7 @@ const handleCreateUrl = async (req, res) => {
 
     try {
         const url = await createUrl(urlObject);
-        return res.status(200).send(url);
+        return res.status(201).send(url);
     } catch (error) {
         console.log(error.message);
         return res.status(500).send("Internal Server Error");
