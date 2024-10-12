@@ -2,7 +2,7 @@ import express from 'express';
 import bodyParser from 'body-parser';
 import morgan from 'morgan';
 import cors from 'cors';
-import userRouter from './user/routes.js';
+import userRouter from './user/Route/UserRoutes.js';
 import urlRouter from "./url/Route/UrlRoutes.js";
 import shortUrlRouter from "./url/Route/ShortUrlRoutes.js";
 import mongoose from "mongoose";
