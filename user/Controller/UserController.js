@@ -1,6 +1,8 @@
 import {createUser, findUserByEmail, findUserByEmailAndPassword} from "../Service/UserService.js";
 import validator from "validator";
 import bcrypt from "bcrypt";
+import jwt from "jsonwebtoken";
+
 
 const handleCreateUser = async (req, res) => {
 
@@ -35,9 +37,11 @@ const handleCreateUser = async (req, res) => {
         }
 
         const hashedPassword = await bcrypt.hash(password, 10);
-        const status = 'pending';
+        const status = 'active';
 
         const newUser = await createUser({firstName, lastName, email, country, password: hashedPassword, status});
+
+
 
         return res.status(201).json({message: "User created successfully"});
 
@@ -75,8 +79,10 @@ const handleLogin = async (req, res) => {
             return res.status(401).json({ message: "User is not active" });
         }
 
+        const jwtToken = jwt.sign({ userId: user.email }, process.env.JWT_SECRET, { expiresIn: '1h' });
+
         // User is authenticated, return success
-        return res.status(200).json({ message: "User logged in successfully" });
+        return res.status(200).json({ message: "User logged in successfully", data: { token: jwtToken } });
 
     } catch (error) {
         console.log(error.message);
