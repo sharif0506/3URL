@@ -21,7 +21,7 @@ const create = async (url) => {
 const update = async (urlId, urlObject) => {
     return await Url.findOneAndUpdate(
         {_id: urlId},
-        {originalUrl: urlObject.originalUrl, status: urlObject.status},
+        {originalUrl: urlObject.originalUrl, status: urlObject.status, isFavorite: urlObject.isFavorite},
         {new: true, runValidators: true}
     ).exec();
 }

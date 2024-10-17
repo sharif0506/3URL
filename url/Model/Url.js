@@ -17,6 +17,7 @@ const urlSchema = new mongoose.Schema({
         enum: ['active', 'inactive', 'expired'],
         default: 'active'
     },
+    isFavorite: { type: Boolean, default: false },
     createdAt: { type: Date, default: Date.now }
 });
 

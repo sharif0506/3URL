@@ -52,10 +52,15 @@ const handleGetUrlById = async (req, res) => {
 
 // Create a new URL
 const handleCreateUrl = async (req, res) => {
-    const {originalUrl} = req.body;
+    const {originalUrl, isFavorite} = req.body;
 
-    if (!validator.isURL(originalUrl)) {
+    if (!originalUrl || !validator.isURL(originalUrl)) {
         return res.status(400).send({message: 'Invalid URL'});
+    }
+
+    let markedAsFavorite = false;
+    if (isFavorite === true) {
+        markedAsFavorite = true;
     }
 
     const shortCode = nanoid(10);
@@ -64,7 +69,8 @@ const handleCreateUrl = async (req, res) => {
     const urlObject = {
         'originalUrl': originalUrl,
         'shortCode': shortCode,
-        'status': status
+        'status': status,
+        'isFavorite': markedAsFavorite
     };
 
     try {
@@ -79,14 +85,14 @@ const handleCreateUrl = async (req, res) => {
 
 const handleUpdateUrl = async (req, res) => {
 
-    const {originalUrl, status} = req.body;
+    const {originalUrl, status, isFavorite} = req.body;
     const {urlId} = req.params;
 
     if (!/^[0-9a-fA-F]{24}$/.test(urlId)) {
         return res.status(400).send({message: 'Invalid ID format'});
     }
 
-    if (!validator.isURL(originalUrl)) {
+    if (!originalUrl || !validator.isURL(originalUrl)) {
         return res.status(400).send({message: 'Invalid URL'});
     }
 
@@ -94,9 +100,15 @@ const handleUpdateUrl = async (req, res) => {
         return res.status(400).send({message: 'Invalid status'});
     }
 
+    let markedAsFavorite = false;
+    if (isFavorite === true) {
+        markedAsFavorite = true;
+    }
+
     const urlObject = {
         'originalUrl': originalUrl,
-        'status': status
+        'status': status,
+        'isFavorite': markedAsFavorite
     };
 
     try {
