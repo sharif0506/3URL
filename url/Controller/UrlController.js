@@ -12,7 +12,8 @@ const handleGetUrlByShortCode = async (req, res) => {
         }
         const url = await getUrlByShortCode(shortCode);
         if (!url) return res.status(404).send({message: 'Url Not Found'});
-        return res.redirect(url.originalUrl);
+        // return res.redirect(url.originalUrl);
+        return res.status(200).send({url: url.originalUrl});
     } catch (error) {
         console.log(error.message);
         return res.status(500).send({message: "Internal Server Error"});
