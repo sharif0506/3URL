@@ -30,6 +30,6 @@ try {
 app.use('/api/users', userRouter);
 app.use('/api/urls', urlRouter);
 
-app.use('/t', shortUrlRouter);
+app.use('/shortcode', shortUrlRouter);
 
 export default app;
