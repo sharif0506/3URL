@@ -30,7 +30,7 @@ const handleCreateUser = async (req, res) => {
             return res.status(400).json({message: "Passwords do not match."});
         }
 
-        // Check if user already exists
+        // Check if a user already exists
         const user = await findUserByEmail(email);
         if (user) {
             return res.status(400).json({message: "Email already exists."});

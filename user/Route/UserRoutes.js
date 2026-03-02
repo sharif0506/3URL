@@ -12,12 +12,6 @@ userRouter.post("/login", async (req, res) => {
     return await handleLogin(req, res);
 });
 
-
-userRouter.post("/forget_password", (req, res) => {
-
-});
-
-
 userRouter.post("/reset_password", (req, res) => {
 
 });
