@@ -6,31 +6,18 @@ import {
     handleUpdateUrl,
     handleDeleteUrl
 } from "../Controller/UrlController.js";
+import {authenticateJWT} from "../../middleware/authMiddleware.js";
 
 
 let urlRouter = express.Router();
 
-urlRouter.get("/", (req, res) => {
-    return handleGetUrls(req, res);
-});
+urlRouter.use(authenticateJWT);
 
-urlRouter.get("/:urlId", (req, res) => {
-    return handleGetUrlById(req, res);
-});
-
-urlRouter.post("/", (req, res) => {
-    return handleCreateUrl(req, res);
-});
-
-
-urlRouter.put("/:urlId", (req, res) => {
-    return handleUpdateUrl(req, res);
-});
-
-
-urlRouter.delete("/:urlId", (req, res) => {
-    return handleDeleteUrl(req, res);
-});
+urlRouter.get("/", handleGetUrls);
+urlRouter.get("/:urlId", handleGetUrlById);
+urlRouter.post("/", handleCreateUrl);
+urlRouter.put("/:urlId", handleUpdateUrl);
+urlRouter.delete("/:urlId", handleDeleteUrl);
 
 export default urlRouter;
 
