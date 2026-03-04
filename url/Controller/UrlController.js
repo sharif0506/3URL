@@ -12,7 +12,7 @@ const handleGetUrlByShortCode = async (req, res) => {
         }
         const url = await getUrlByShortCode(shortCode);
         if (!url) return res.status(404).send({message: 'Url Not Found'});
-        // return res.redirect(url.originalUrl);
+
         return res.status(200).send({url: url.originalUrl});
     } catch (error) {
         console.log(error.message);
@@ -51,37 +51,61 @@ const handleGetUrlById = async (req, res) => {
 };
 
 
+const generateUniqueShortCode = async () => {
+    return nanoid(10);
+};
+
 // Create a new URL
 const handleCreateUrl = async (req, res) => {
-    const {originalUrl, isFavorite} = req.body;
+    const { originalUrl, isFavorite } = req.body || {};
 
     if (!originalUrl || !validator.isURL(originalUrl)) {
-        return res.status(400).send({message: 'Invalid URL'});
+        return res.status(400).send({ message: "Invalid URL" });
     }
 
-    let markedAsFavorite = false;
-    if (isFavorite === true) {
-        markedAsFavorite = true;
-    }
+    const markedAsFavorite = isFavorite === true;
+    const status = "active";
 
-    const shortCode = nanoid(10);
-    const status = 'active';
-
-    const urlObject = {
-        'originalUrl': originalUrl,
-        'shortCode': shortCode,
-        'status': status,
-        'isFavorite': markedAsFavorite
-    };
+    let shortCode;
+    let url;
 
     try {
-        const url = await createUrl(urlObject);
+        let attempts = 0;
+        const maxAttempts = 5;
+
+        while (attempts < maxAttempts) {
+            shortCode = await generateUniqueShortCode();
+
+            try {
+                url = await createUrl({
+                    originalUrl,
+                    shortCode,
+                    status,
+                    isFavorite: markedAsFavorite
+                });
+
+                break; // success
+            } catch (error) {
+                // Duplicate key error mongodb database
+                if (error.code === 11000) {
+                    console.log(`Short code collision detected: ${shortCode}, retrying...`);
+                    attempts++;
+                } else {
+                    // for any other error
+                    throw error;
+                }
+            }
+        }
+
+        if (!url) {
+            return res.status(500).send({ message: "Could not create url with short code, try again later." });
+        }
+
         return res.status(201).send(url);
     } catch (error) {
         console.log(error.message);
-        return res.status(500).send({message: "Internal Server Error"});
+        return res.status(500).send({ message: "Internal Server Error" });
     }
-
 };
 
 const handleUpdateUrl = async (req, res) => {
