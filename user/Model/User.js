@@ -50,6 +50,10 @@ const userSchema = new mongoose.Schema({
         enum: ['active', 'inactive', 'pending'],
         default: 'active',
     },
+    resetPasswordToken: { type: String },
+    resetPasswordExpires: { type: Date },
+    emailVerificationToken: { type: String },
+    isEmailVerified: { type: Boolean, default: false },
 }, {
     timestamps: true, // Automatically adds createdAt and updatedAt fields
 });
