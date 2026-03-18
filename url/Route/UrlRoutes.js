@@ -6,7 +6,7 @@ import {
     handleUpdateUrl,
     handleDeleteUrl
 } from "../Controller/UrlController.js";
-import {authenticateJWT} from "../../middleware/authMiddleware.js";
+import {authenticateJWT} from "../../user/Middleware/authMiddleware.js";
 
 
 let urlRouter = express.Router();
