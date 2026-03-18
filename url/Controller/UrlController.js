@@ -13,7 +13,13 @@ const handleGetUrlByShortCode = async (req, res) => {
         const url = await getUrlByShortCode(shortCode);
         if (!url) return res.status(404).send({message: 'Url Not Found'});
 
-        return res.status(200).send({url: url.originalUrl});
+        // Increment analytics fields
+        url.visitCount = (url.visitCount || 0) + 1;
+        url.lastVisited = new Date();
+        await url.save();
+
+        // Redirect to the original URL
+        return res.redirect(url.originalUrl);
     } catch (error) {
         console.log(error.message);
         return res.status(500).send({message: "Internal Server Error"});

@@ -18,6 +18,8 @@ const urlSchema = new mongoose.Schema({
         default: 'active'
     },
     isFavorite: { type: Boolean, default: false },
+    visitCount: { type: Number, default: 0 },
+    lastVisited: { type: Date },
     createdAt: { type: Date, default: Date.now }
 });
 
