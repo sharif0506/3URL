@@ -1,5 +1,4 @@
-import {createUser, findUserByEmail, findUserByEmailAndPassword} from "../Service/UserService.js";
-import validator from "validator";
+import {createUser, findUserByEmail} from "../Service/UserService.js";
 import bcrypt from "bcrypt";
 import jwt from "jsonwebtoken";
 import crypto from 'crypto';
@@ -7,32 +6,9 @@ import User from '../Model/User.js';
 import sendEmail from '../Helpers/email.js';
 
 const handleCreateUser = async (req, res) => {
-
     try {
-        const {firstName, lastName, email, country, password, retypePassword} = req.body;
+        const {firstName, lastName, email, country, password} = req.body;
 
-        // Validation
-        if (!firstName || !lastName) {
-            return res.status(400).json({message: "Firstname and lastname are required."});
-        }
-
-        if (!validator.isEmail(email)) {
-            return res.status(400).json({message: "Invalid email address."});
-        }
-
-        if (country.length !== 2) {
-            return res.status(400).json({message: "Country code must be 2 characters long."});
-        }
-
-        if (password.length < 6) {
-            return res.status(400).json({message: "Password must be at least 6 characters long."});
-        }
-
-        if (password !== retypePassword) {
-            return res.status(400).json({message: "Passwords do not match."});
-        }
-
-        // Check if a user already exists
         const user = await findUserByEmail(email);
         if (user) {
             return res.status(400).json({message: "Email already exists."});
@@ -42,7 +18,7 @@ const handleCreateUser = async (req, res) => {
         const status = 'active';
         const emailVerificationToken = crypto.randomBytes(32).toString('hex');
 
-        const newUser = await createUser({
+        await createUser({
             firstName, lastName, email, country, password: hashedPassword, status,
             emailVerificationToken,
             isEmailVerified: false
@@ -64,14 +40,8 @@ const handleLogin = async (req, res) => {
     try {
         const { email, password } = req.body;
 
-        // Validate the inputs
-        if (!email || !password) {
-            return res.status(400).json({ message: "Email and password are required." });
-        }
-
         const user = await findUserByEmail(email);
 
-        // If the user is not found
         if (!user) {
             return res.status(401).json({ message: "Invalid credentials" });
         }
@@ -83,14 +53,11 @@ const handleLogin = async (req, res) => {
             return res.status(401).json({ message: "Invalid credentials" });
         }
 
-        // Check if the user's status is 'pending'
-        if (user.status === 'pending') {
+        if (user.status !== 'active') {
             return res.status(401).json({ message: "User is not active" });
         }
 
         const jwtToken = jwt.sign({ userId: user.email }, process.env.JWT_SECRET, { expiresIn: '1h' });
-
-        // User is authenticated, return success
         return res.status(200).json({ message: "User logged in successfully", data: { token: jwtToken } });
 
     } catch (error) {
@@ -100,7 +67,7 @@ const handleLogin = async (req, res) => {
 };
 
 // Request password reset
-export const requestPasswordReset = async (req, res) => {
+export const forgetPassword = async (req, res) => {
     const { email } = req.body;
     try {
         const user = await User.findOne({ email });
@@ -109,7 +76,7 @@ export const requestPasswordReset = async (req, res) => {
         }
         const token = crypto.randomBytes(32).toString('hex');
         user.resetPasswordToken = token;
-        user.resetPasswordExpires = Date.now() + 3600000; // 1 hour
+        user.resetPasswordExpires = Date.now() + 3600000; // expires after 1 hour
         await user.save();
         const resetLink = `${req.protocol}://${req.get('host')}/api/users/reset-password/${token}`;
         await sendEmail(user.email, 'Password Reset', `Reset your password: ${resetLink}`);
@@ -123,9 +90,6 @@ export const requestPasswordReset = async (req, res) => {
 export const resetPassword = async (req, res) => {
     const { token } = req.params;
     const { password } = req.body;
-    if (!password || password.length < 6) {
-        return res.status(400).json({ message: 'Password must be at least 6 characters long.' });
-    }
     try {
         const user = await User.findOne({
             resetPasswordToken: token,
@@ -134,8 +98,7 @@ export const resetPassword = async (req, res) => {
         if (!user) {
             return res.status(400).json({ message: 'Invalid or expired token' });
         }
-        const hashedPassword = await bcrypt.hash(password, 10);
-        user.password = hashedPassword;
+        user.password = await bcrypt.hash(password, 10);
         user.resetPasswordToken = undefined;
         user.resetPasswordExpires = undefined;
         await user.save();
