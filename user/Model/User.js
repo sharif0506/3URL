@@ -24,7 +24,7 @@ const userSchema = new mongoose.Schema({
         minlength: 2, // Enforce a minimum length of 2 characters
         maxlength: 2, // Enforce a maximum length of 2 characters
         validate: {
-            validator: function(v) {
+            validator: function (v) {
                 return /^[A-Z]{2}$/.test(v); // Ensure it contains exactly two uppercase alphabetic characters
             },
             message: 'Country code must be a 2-letter uppercase alphabetic code.'
@@ -32,10 +32,10 @@ const userSchema = new mongoose.Schema({
     },
     email: {
         type: String,
-        required: true,
         unique: true,
         trim: true,
         lowercase: true,
+        sparse: true,
         validate: {
             validator: validator.isEmail,
             message: 'Invalid email format',
@@ -43,17 +43,22 @@ const userSchema = new mongoose.Schema({
     },
     password: {
         type: String,
-        required: true,
+    },
+    authProvider: {
+        type: String
+    },
+    authProviderId: {
+        type: String,
     },
     status: {
         type: String,
         enum: ['active', 'inactive', 'pending'],
         default: 'active',
     },
-    resetPasswordToken: { type: String },
-    resetPasswordExpires: { type: Date },
-    emailVerificationToken: { type: String },
-    isEmailVerified: { type: Boolean, default: false },
+    resetPasswordToken: {type: String},
+    resetPasswordExpires: {type: Date},
+    emailVerificationToken: {type: String},
+    isEmailVerified: {type: Boolean, default: false},
 }, {
     timestamps: true, // Automatically adds createdAt and updatedAt fields
 });
